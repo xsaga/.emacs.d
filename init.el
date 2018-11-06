@@ -12,9 +12,13 @@
 
 (require 'cl-lib) ;; remove-if, ...
 
+;; ========== instalar paquetes ==========
+
+;; lista de paquetes
 (defvar my-packages '(magit)
   "Lista de paquetes que hay que mantener instalados.")
 
+;; instalar los paquetes que no esten instalados
 (let ((status-my-packages (mapcar 'package-installed-p my-packages)))
   (if (member nil status-my-packages)
       (progn
@@ -25,15 +29,6 @@
 	(message "%s" "Hecho."))
     (message "%s" "Todo actualizado")))
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages (quote (magit))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+(setq custom-file "~/.emacs.d/custom.el")
+(load custom-file)
+
