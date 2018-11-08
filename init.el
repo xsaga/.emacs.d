@@ -1,4 +1,3 @@
-
 (require 'package)
 
 (add-to-list 'package-archives
@@ -10,12 +9,16 @@
 ;; You may delete these explanatory comments.
 (package-initialize)
 
-(require 'cl-lib) ;; remove-if, ...
+(require 'cl-lib) ;; cl-remove-if, ...
 
 ;; ========== instalar paquetes ==========
-
-;; lista de paquetes
-(defvar my-packages '(magit)
+;; lista de paquetes:
+;; para evaluarlo de nuevo despues de añadir paquetes
+;; no usar C-x C-e (eval-lastsexp), hay que usar
+;; C-M x (eval-defun)
+(defvar my-packages '(magit
+		      which-key
+		      solarized-theme)
   "Lista de paquetes que hay que mantener instalados.")
 
 ;; instalar los paquetes que no esten instalados
@@ -24,11 +27,19 @@
       (progn
 	(message "%s" "Hay paquetes sin actualizar, actualizando...")
 	(package-refresh-contents)
-	(dolist (pkg (remove-if 'package-installed-p my-packages))
+	(dolist (pkg (cl-remove-if 'package-installed-p my-packages))
 	  (package-install pkg))
 	(message "%s" "Hecho."))
     (message "%s" "Todo actualizado")))
 
+;; mover lisp autogenerado por M-x customize a otro archivo
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
 
+;; ========== modificar UI ==========
+(tool-bar-mode -1)
+(global-display-line-numbers-mode)
+(load-theme 'solarized-light t)
+
+;; ========== modificar paquetes ==========
+(which-key-mode)
