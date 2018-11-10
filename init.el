@@ -35,16 +35,17 @@
   "Lista de paquetes que hay que mantener instalados.")
 
 ;; instalar los paquetes que no esten instalados
-(let ((status-my-packages (mapcar #'package-installed-p my-packages)))
-  (if (member nil status-my-packages)
+(let ((not-installed-packages (cl-remove-if #'package-installed-p my-packages)))
+  (if not-installed-packages
       (progn
 	(message "%s" "Hay paquetes sin actualizar, actualizando...")
 	(package-refresh-contents)
-	(dolist (pkg (cl-remove-if #'package-installed-p my-packages))
+	(dolist (pkg not-installed-packages)
 	  (package-install pkg))
 	(message "%s" "Hecho."))
     (message "%s" "Todo actualizado")))
 
+;; ========== customization file ==========
 ;; mover lisp autogenerado por M-x customize a otro archivo
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
@@ -55,5 +56,5 @@
 (load-theme 'solarized-light t)
 ;; ver creamsody-theme
 
-;; ========== modificar paquetes ==========
+;; ========== which-key ==========
 (which-key-mode)
