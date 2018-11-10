@@ -59,6 +59,10 @@
 (load-theme 'solarized-light t)
 ;; ver creamsody-theme
 
+;; ========== magit ==========
+;; https://magit.vc/
+(global-set-key (kbd "C-x g") 'magit-status)
+
 ;; ========== which-key ==========
 ;; https://github.com/justbur/emacs-which-key
 (which-key-mode)
