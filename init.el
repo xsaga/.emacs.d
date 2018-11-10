@@ -29,9 +29,12 @@
 ;; para evaluarlo de nuevo despues de añadir paquetes
 ;; no usar C-x C-e (eval-lastsexp), hay que usar
 ;; C-M x (eval-defun)
-(defvar my-packages '(magit
-		      which-key
-		      solarized-theme)
+(defvar my-packages '(magit ;; interface to git
+		      which-key ;; display the key bindings following a command
+		      solarized-theme ;; theme
+		      smex ;; M-x enhancement for Emacs
+		      swiper ;; alternative to isearch
+		      )
   "Lista de paquetes que hay que mantener instalados.")
 
 ;; instalar los paquetes que no esten instalados
@@ -57,4 +60,23 @@
 ;; ver creamsody-theme
 
 ;; ========== which-key ==========
+;; https://github.com/justbur/emacs-which-key
 (which-key-mode)
+
+;; ========== ido ==========
+;; built-in
+(setq ido-enable-flex-matching t)
+(setq ido-create-new-buffer 'always)
+(setq ido-everywhere t)
+(setq ido-use-filename-at-point t)
+(ido-mode 1)
+
+;; ========== smex ==========
+;; https://github.com/nonsequitur/smex/blob/master/README.markdown
+;; sustituir 'execute-extended-command por 'smex
+(global-set-key (kbd "M-x") 'smex)
+(global-set-key (kbd "M-X") 'smex-major-mode-commands)
+
+;; ========== swiper ==========
+;; https://github.com/abo-abo/swiper
+(global-set-key (kbd "C-S-s") 'swiper)
