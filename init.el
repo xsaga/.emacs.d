@@ -55,7 +55,10 @@
 
 ;; ========== modificar UI ==========
 (tool-bar-mode -1)
-(global-display-line-numbers-mode)
+
+(when (version<= "26.0.50" emacs-version )
+  (global-display-line-numbers-mode))
+
 (load-theme 'solarized-light t)
 ;; ver creamsody-theme
 
