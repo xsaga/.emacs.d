@@ -36,6 +36,8 @@
 		      swiper ;; alternative to isearch
 		      rainbow-mode ;; colorize color names / hex colors
 		      rainbow-delimiters ;; highlight parenthesis
+		      birds-of-paradise-plus-theme ;; brown/orange color theme
+		      company ;; auto completion
 		      )
   "Lista de paquetes que hay que mantener instalados.")
 
@@ -69,7 +71,8 @@
 (when (version<= "26.0.50" emacs-version )
   (global-display-line-numbers-mode))
 
-(load-theme 'solarized-light t)
+;; (load-theme 'solarized-light t)
+(load-theme 'birds-of-paradise-plus t)
 ;; ver creamsody-theme
 
 ;; ========== magit ==========
@@ -109,3 +112,16 @@
 ;; ========== rainbow-delimiters  ==========
 (show-paren-mode t)
 (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
+
+;; ========== company  ==========
+(add-hook 'after-init-hook #'global-company-mode)
+(setq company-minimum-prefix-length 2)
+(setq company-idle-delay 0)
+;; por defecto las sugerencias de company
+;; se mueven con M-n y M-p. Cambiar a usar C-n y C-p
+(with-eval-after-load 'company
+  (define-key company-active-map (kbd "M-n") nil)
+  (define-key company-active-map (kbd "M-p") nil)
+  (define-key company-active-map (kbd "C-n") #'company-select-next)
+  (define-key company-active-map (kbd "C-p") #'company-select-previous))
+
