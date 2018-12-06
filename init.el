@@ -34,6 +34,8 @@
 		      solarized-theme ;; theme
 		      smex ;; M-x enhancement for Emacs
 		      swiper ;; alternative to isearch
+		      rainbow-mode ;; colorize color names / hex colors
+		      rainbow-delimiters ;; highlight parenthesis
 		      )
   "Lista de paquetes que hay que mantener instalados.")
 
@@ -55,6 +57,14 @@
 
 ;; ========== modificar UI ==========
 (tool-bar-mode -1)
+(line-number-mode 1)
+(column-number-mode 1)
+(size-indication-mode 1)
+(setq display-time-24hr-format t)
+(setq display-time-day-and-date t)
+(setq display-time-default-load-average nil)
+(display-time-mode 1)
+(display-battery-mode -1)
 
 (when (version<= "26.0.50" emacs-version )
   (global-display-line-numbers-mode))
@@ -75,7 +85,7 @@
 (setq ido-enable-flex-matching t)
 (setq ido-create-new-buffer 'always)
 (setq ido-everywhere t)
-(setq ido-use-filename-at-point t)
+(setq ido-use-filename-at-point nil)
 (ido-mode 1)
 
 ;; ========== smex ==========
@@ -92,3 +102,10 @@
 (if (display-graphic-p)
     (global-set-key (kbd "C-S-s") 'swiper) ;; en emacs GUI
   (global-set-key (kbd "C-s") 'swiper))
+
+;; ========== rainbow-mode  ==========
+(add-hook 'prog-mode-hook #'rainbow-mode)
+
+;; ========== rainbow-delimiters  ==========
+(show-paren-mode t)
+(add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
