@@ -10,6 +10,7 @@
 (package-initialize)
 
 (require 'cl-lib) ;; cl-remove-if, ...
+(require 'rx) ;; cargar esto antes de instalar company-anaconda
 
 ;; ========== instalar paquetes ==========
 
@@ -38,8 +39,13 @@
 		      rainbow-delimiters ;; highlight parenthesis
 		      birds-of-paradise-plus-theme ;; brown/orange color theme
 		      company ;; auto completion
+		      anaconda-mode ;; code completion, navigation, doc... python
+		      company-anaconda ;; anaconda backend for company
 		      )
   "Lista de paquetes que hay que mantener instalados.")
+
+;; info sobre python
+;; http://nasseralkmim.github.io/notes/2017/03/11/minimalist-python-developement-environment-in-emacs/
 
 ;; instalar los paquetes que no esten instalados
 (let ((not-installed-packages (cl-remove-if #'package-installed-p my-packages)))
@@ -125,3 +131,12 @@
   (define-key company-active-map (kbd "C-n") #'company-select-next)
   (define-key company-active-map (kbd "C-p") #'company-select-previous))
 
+;; ========== anaconda-mode  ==========
+;; https://github.com/proofit404/anaconda-mode
+(add-hook 'python-mode-hook 'anaconda-mode)
+(add-hook 'python-mode-hook 'anaconda-eldoc-mode)
+
+;; ========== company-anaconda  ==========
+;; https://github.com/proofit404/company-anaconda
+(eval-after-load "company"
+ '(add-to-list 'company-backends '(company-anaconda :with company-capf)))
