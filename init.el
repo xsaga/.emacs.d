@@ -41,6 +41,7 @@
 		      company ;; auto completion
 		      anaconda-mode ;; code completion, navigation, doc... python
 		      company-anaconda ;; anaconda backend for company
+		      flycheck ;; syntax checker
 		      )
   "Lista de paquetes que hay que mantener instalados.")
 
@@ -119,6 +120,9 @@
 (show-paren-mode t)
 (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 
+;; ========== python  ==========
+(setq python-shell-interpreter "python3")
+
 ;; ========== company  ==========
 (add-hook 'after-init-hook #'global-company-mode)
 (setq company-minimum-prefix-length 2)
@@ -140,3 +144,8 @@
 ;; https://github.com/proofit404/company-anaconda
 (eval-after-load "company"
  '(add-to-list 'company-backends '(company-anaconda :with company-capf)))
+
+;; ========== flycheck  ==========
+(global-flycheck-mode)
+;; poner antes python-shell-interpreter a python3
+(defvaralias 'flycheck-python-flake8-executable 'python-shell-interpreter)
