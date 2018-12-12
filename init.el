@@ -66,6 +66,7 @@
 
 ;; ========== modificar UI ==========
 (tool-bar-mode -1)
+(scroll-bar-mode -1)
 (line-number-mode 1)
 (column-number-mode 1)
 (size-indication-mode 1)
@@ -73,10 +74,17 @@
 (setq display-time-day-and-date t)
 (setq display-time-default-load-average nil)
 (display-time-mode 1)
-(display-battery-mode -1)
+(display-battery-mode 1)
 
 (when (version<= "26.0.50" emacs-version )
   (global-display-line-numbers-mode))
+
+;; ========== mis-funciones ==========
+(defun diff-buffer-with-saved-file ()
+  "Same as 'diff-buffer-with-file', but automatically choosing the current buffer."
+  (interactive)
+  (diff-buffer-with-file (current-buffer)))
+(global-set-key (kbd "C-c d") 'diff-buffer-with-saved-file)
 
 ;; (load-theme 'solarized-light t)
 (load-theme 'birds-of-paradise-plus t)
