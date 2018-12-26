@@ -30,6 +30,13 @@
 ;; para evaluarlo de nuevo despues de añadir paquetes
 ;; no usar C-x C-e (eval-lastsexp), hay que usar
 ;; C-M x (eval-defun)
+
+;; antes de instalar autocompletion para python:
+;; anaconda-mode, company-anaconda, flycheck
+;; hay que instalar en el sistema:
+;; python3-setuptools, python3-ipython, python3-jedi, python3-flake8
+;; python3-mypy (y mypy en ubuntu)
+
 (defvar my-packages '(magit ;; interface to git
 		      which-key ;; display the key bindings following a command
 		      solarized-theme ;; theme
@@ -42,6 +49,7 @@
 		      anaconda-mode ;; code completion, navigation, doc... python
 		      company-anaconda ;; anaconda backend for company
 		      flycheck ;; syntax checker
+		      flycheck-mypy ;; python type annotations checker
 		      )
   "Lista de paquetes que hay que mantener instalados.")
 
@@ -157,3 +165,4 @@
 (global-flycheck-mode)
 ;; poner antes python-shell-interpreter a python3
 (defvaralias 'flycheck-python-flake8-executable 'python-shell-interpreter)
+(flycheck-add-next-checker 'python-flake8 '(warning . python-mypy) t)
