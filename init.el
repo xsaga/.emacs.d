@@ -9,6 +9,19 @@
 (require 'cl-lib) ;; cl-remove-if, ...
 (require 'rx) ;; cargar esto antes de instalar company-anaconda
 
+;; ========== windows ==========
+
+(when (eq system-type 'windows-nt)
+  ;; Git for Windows en PATH
+  (if (and (file-accessible-directory-p "C:\\Program Files\\Git\\usr\\bin") (not (string-match-p (regexp-quote "C:\\Program Files\\Git\\usr\\bin") (getenv "PATH"))))
+      (setenv "PATH" (concat "C:\\Program Files\\Git\\usr\\bin;" (getenv "PATH")))
+    (message "No Git for Windows directory found or already in PATH"))
+  ;; Borrar NUL de find | grep
+  ;; default "find <D> <X> -type f <F> -exec grep <C> -n <R> \"{}\" NUL \";\""
+  (require 'grep)
+  (grep-apply-setting 'grep-find-template "find <D> <X> -type f <F> -exec grep <C> -nH <R> \"{}\" \";\""))
+
+
 ;; (server-start)
 
 ;; ========== instalar paquetes ==========
