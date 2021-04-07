@@ -61,10 +61,10 @@
 		      rainbow-delimiters ;; highlight parenthesis
 		      birds-of-paradise-plus-theme ;; brown/orange color theme
 		      company ;; auto completion
-		      anaconda-mode ;; code completion, navigation, doc... python
-		      company-anaconda ;; anaconda backend for company
-		      flycheck ;; syntax checker
-		      flycheck-mypy ;; python type annotations checker
+;;		      anaconda-mode ;; code completion, navigation, doc... python
+;;		      company-anaconda ;; anaconda backend for company
+;;		      flycheck ;; syntax checker
+;;		      flycheck-mypy ;; python type annotations checker
 		      git-gutter ;; diff with repo
 		      avy
 		      yaml-mode
@@ -197,7 +197,7 @@
 (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 
 ;; ========== python  ==========
-(setq python-shell-interpreter "python3")
+;; (setq python-shell-interpreter "python3")
 
 ;; ========== company  ==========
 (add-hook 'after-init-hook #'global-company-mode)
@@ -213,19 +213,19 @@
 
 ;; ========== anaconda-mode  ==========
 ;; https://github.com/proofit404/anaconda-mode
-(add-hook 'python-mode-hook 'anaconda-mode)
-(add-hook 'python-mode-hook 'anaconda-eldoc-mode)
+;; (add-hook 'python-mode-hook 'anaconda-mode)
+;; (add-hook 'python-mode-hook 'anaconda-eldoc-mode)
 
 ;; ========== company-anaconda  ==========
 ;; https://github.com/proofit404/company-anaconda
-(eval-after-load "company"
- '(add-to-list 'company-backends '(company-anaconda :with company-capf)))
+;; (eval-after-load "company"
+;;  '(add-to-list 'company-backends '(company-anaconda :with company-capf)))
 
 ;; ========== flycheck  ==========
-(global-flycheck-mode)
+;; (global-flycheck-mode)
 ;; poner antes python-shell-interpreter a python3
-(defvaralias 'flycheck-python-flake8-executable 'python-shell-interpreter)
-(flycheck-add-next-checker 'python-flake8 '(warning . python-mypy) t)
+;; (defvaralias 'flycheck-python-flake8-executable 'python-shell-interpreter)
+;; (flycheck-add-next-checker 'python-flake8 '(warning . python-mypy) t)
 
 ;; ========== git-gutter  ==========
 (global-git-gutter-mode +1)
