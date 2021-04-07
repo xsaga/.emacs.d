@@ -12,6 +12,9 @@
 ;; ========== windows ==========
 
 (when (eq system-type 'windows-nt)
+  ;; default-directory
+  (setq inhibit-splash-screen t)
+  (when (getenv "HOME") (setq default-directory (concat (getenv "HOME") "/")))
   ;; Git for Windows en PATH
   (if (and (file-accessible-directory-p "C:\\Program Files\\Git\\usr\\bin") (not (string-match-p (regexp-quote "C:\\Program Files\\Git\\usr\\bin") (getenv "PATH"))))
       (setenv "PATH" (concat "C:\\Program Files\\Git\\usr\\bin;" (getenv "PATH")))
