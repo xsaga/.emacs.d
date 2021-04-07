@@ -3,14 +3,13 @@
 (add-to-list 'package-archives
 	     '("melpa" . "https://melpa.org/packages/"))
 
-;; Added by Package.el.  This must come before configurations of
-;; installed packages.  Don't delete this line.  If you don't want it,
-;; just comment it out by adding a semicolon to the start of the line.
-;; You may delete these explanatory comments.
-(package-initialize)
+(when (< emacs-major-version 27)
+  (package-initialize))
 
 (require 'cl-lib) ;; cl-remove-if, ...
 (require 'rx) ;; cargar esto antes de instalar company-anaconda
+
+;; (server-start)
 
 ;; ========== instalar paquetes ==========
 
@@ -50,6 +49,11 @@
 		      company-anaconda ;; anaconda backend for company
 		      flycheck ;; syntax checker
 		      flycheck-mypy ;; python type annotations checker
+		      git-gutter ;; diff with repo
+		      avy
+		      yaml-mode
+		      telephone-line
+		      beacon
 		      )
   "Lista de paquetes que hay que mantener instalados.")
 
@@ -70,7 +74,8 @@
 ;; ========== customization file ==========
 ;; mover lisp autogenerado por M-x customize a otro archivo
 (setq custom-file "~/.emacs.d/custom.el")
-(load custom-file)
+(when (file-exists-p custom-file)
+  (load custom-file))
 
 ;; ========== modificar UI ==========
 (tool-bar-mode -1)
@@ -87,15 +92,54 @@
 (when (version<= "26.0.50" emacs-version )
   (global-display-line-numbers-mode))
 
+(if (member "Inconsolata" (font-family-list))
+    (set-frame-font "Inconsolata 14" nil t))
+
+;; scrolling
+(setq scroll-conservatively 10)
+(setq scroll-margin 3)
+
+;; whitespace
+(setq-default show-trailing-whitespace t)
+
 ;; ========== mis-funciones ==========
-(defun diff-buffer-with-saved-file ()
+(defun xsc-diff-buffer-with-saved-file ()
   "Same as 'diff-buffer-with-file', but automatically choosing the current buffer."
   (interactive)
   (diff-buffer-with-file (current-buffer)))
-(global-set-key (kbd "C-c d") 'diff-buffer-with-saved-file)
+(global-set-key (kbd "C-c d") 'xsc-diff-buffer-with-saved-file)
+
+(defun xsc-timestamp-dmyz ()
+  "Date timestamp."
+  (interactive)
+       (insert (format-time-string "%d-%m-%Y %Z")))
+
+(defun xsc-timestamp-hms ()
+  "Hour timestamp."
+  (interactive)
+       (insert (format-time-string "%H:%M:%S")))
+
+(defun xsc-unix-timestamp-region-to-date (start end)
+  "Select a region containing a unix timestamp and convert it to a human readable date."
+  (interactive "r")
+  (if (use-region-p)
+      (message (format-time-string "%F %T %Z"
+				   (seconds-to-time (string-to-number (buffer-substring start end)))
+				   ))))
+
+(defun xsc-sort-comma-separated-words (start end)
+  "sort comma separated words. For python imports for example."
+  (interactive "r")
+  (if (use-region-p)
+      (let ( (contents (buffer-substring start end)) )
+	(progn
+	  (kill-region (region-beginning) (region-end))
+	  (insert (string-join (sort (mapcar 'string-trim (split-string contents ",")) 'string-lessp) ", "))
+	  ))
+    ))
 
 ;; (load-theme 'solarized-light t)
-(load-theme 'birds-of-paradise-plus t)
+;; (load-theme 'birds-of-paradise-plus t)
 ;; ver creamsody-theme
 
 ;; ========== magit ==========
@@ -166,3 +210,26 @@
 ;; poner antes python-shell-interpreter a python3
 (defvaralias 'flycheck-python-flake8-executable 'python-shell-interpreter)
 (flycheck-add-next-checker 'python-flake8 '(warning . python-mypy) t)
+
+;; ========== git-gutter  ==========
+(global-git-gutter-mode +1)
+
+;; Jump to next/previous hunk
+(global-set-key (kbd "C-x p") 'git-gutter:previous-hunk)
+(global-set-key (kbd "C-x n") 'git-gutter:next-hunk)
+
+;; ========== avy ==========
+(global-set-key (kbd "C-.") 'avy-goto-char)
+(global-set-key (kbd "C-,") 'avy-goto-line)
+(define-key isearch-mode-map (kbd "C-.") 'avy-isearch)
+
+;; ========== yaml ==========
+(require 'yaml-mode)
+(add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
+
+;; ========= telephone-line ==========
+(require 'telephone-line)
+(telephone-line-mode 0)
+
+;; ========= beacon ==========
+(beacon-mode 1)
