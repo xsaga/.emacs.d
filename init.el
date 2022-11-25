@@ -1,3 +1,5 @@
+;; (run-python "powershell.exe -ExecutionPolicy ByPass -NoExit -Command \"& 'C:/Users/xsaezdecamara/Miniconda3/shell/condabin/conda-hook.ps1' ; conda activate 'C:/Users/xsaezdecamara/Miniconda3/envs/flids' ; python -i \"")
+
 (require 'package)
 
 (add-to-list 'package-archives
@@ -61,15 +63,17 @@
 		      rainbow-delimiters ;; highlight parenthesis
 		      birds-of-paradise-plus-theme ;; brown/orange color theme
 		      company ;; auto completion
-		      anaconda-mode ;; code completion, navigation, doc... python
-		      company-anaconda ;; anaconda backend for company
-		      flycheck ;; syntax checker
-		      flycheck-mypy ;; python type annotations checker
+		      ;; anaconda-mode ;; code completion, navigation, doc... python
+		      ;; company-anaconda ;; anaconda backend for company
+		      ;; flycheck ;; syntax checker
+		      ;; flycheck-mypy ;; python type annotations checker
 		      git-gutter ;; diff with repo
 		      avy
 		      yaml-mode
 		      telephone-line
 		      beacon
+		      eglot
+		      conda
 		      )
   "Lista de paquetes que hay que mantener instalados.")
 
@@ -110,6 +114,12 @@
 
 (if (member "Inconsolata" (font-family-list))
     (set-frame-font "Inconsolata 14" nil t))
+(if (member "Consolas" (font-family-list))
+    (set-frame-font "Consolas 9" nil t))
+(if (member "Cascadia Code" (font-family-list))
+    (set-frame-font "Cascadia Code 9" nil t))
+;; (if (member "NSimSun" (font-family-list))
+;;     (set-frame-font "NSimSun 13" nil t))
 
 ;; scrolling
 (setq scroll-conservatively 10)
@@ -118,7 +128,21 @@
 ;; whitespace
 (setq-default show-trailing-whitespace t)
 
+;; bell
+(setq ring-bell-function 'ignore)
+
+;; backup
+(setq backup-directory-alist `(("." . "C:\\Users\\xsaezdecamara\\Desktop\\e_backupfiles")))
+
 ;; ========== mis-funciones ==========
+
+(defun xsc-yank-last-without-newlines ()
+  "Yank last element from the kill ring with newlines removed.
+Version 27-10-2022"
+  (interactive)                                                                                                 ;; como poner el null character sin poner el null character literalmente el el codigo, sino lo interpreta como archivo binario...
+  (insert (string-trim (replace-regexp-in-string "\n" " " (substring-no-properties (current-kill 0 t))) "[ \t\n\r]+" "[ \t\n\r]+")))
+(global-set-key (kbd "C-M-y") 'xsc-yank-last-without-newlines)
+
 (defun xsc-diff-buffer-with-saved-file ()
   "Same as 'diff-buffer-with-file', but automatically choosing the current buffer."
   (interactive)
@@ -154,8 +178,11 @@
 	  ))
     ))
 
+(set-default-coding-systems 'utf-8-unix)
+
 ;; (load-theme 'solarized-light t)
 ;; (load-theme 'birds-of-paradise-plus t)
+(load-theme 'solarized-dark t)
 ;; ver creamsody-theme
 
 ;; ========== magit ==========
@@ -197,7 +224,7 @@
 (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 
 ;; ========== python  ==========
-(setq python-shell-interpreter "python3")
+;; (setq python-shell-interpreter "python3")
 
 ;; ========== company  ==========
 (add-hook 'after-init-hook #'global-company-mode)
@@ -213,19 +240,21 @@
 
 ;; ========== anaconda-mode  ==========
 ;; https://github.com/proofit404/anaconda-mode
-(add-hook 'python-mode-hook 'anaconda-mode)
-(add-hook 'python-mode-hook 'anaconda-eldoc-mode)
+;; (add-hook 'python-mode-hook 'anaconda-mode)
+;; (add-hook 'python-mode-hook 'anaconda-eldoc-mode)
 
 ;; ========== company-anaconda  ==========
 ;; https://github.com/proofit404/company-anaconda
-(eval-after-load "company"
- '(add-to-list 'company-backends '(company-anaconda :with company-capf)))
+;; (eval-after-load "company"
+;;  '(add-to-list 'company-backends '(company-anaconda :with company-capf)))
 
 ;; ========== flycheck  ==========
-(global-flycheck-mode)
+;; (global-flycheck-mode)
+
 ;; poner antes python-shell-interpreter a python3
-(defvaralias 'flycheck-python-flake8-executable 'python-shell-interpreter)
-(flycheck-add-next-checker 'python-flake8 '(warning . python-mypy) t)
+;; (setq flycheck-python-flake8-executable python-shell-interpreter) ;; https://lists.gnu.org/archive/html/bug-gnu-emacs/2018-08/msg00053.html
+;; (defvaralias 'flycheck-python-flake8-executable 'python-shell-interpreter)
+;; (flycheck-add-next-checker 'python-flake8 '(warning . python-mypy) t)
 
 ;; ========== git-gutter  ==========
 (global-git-gutter-mode +1)
@@ -249,3 +278,23 @@
 
 ;; ========= beacon ==========
 (beacon-mode 1)
+
+(message "configurando conda")
+(setenv "ANACONDA_HOME" "C:/Users/xsaezdecamara/Miniconda3")
+
+(require 'conda)
+;; if you want interactive shell support, include:
+(conda-env-initialize-interactive-shells)
+;; if you want eshell support, include:
+(conda-env-initialize-eshell)
+;; if you want auto-activation (see below for details), include:
+(conda-env-autoactivate-mode t)
+;; if you want to automatically activate a conda environment on the opening of a file:
+;; (add-hook 'find-file-hook (lambda () (when (bound-and-true-p conda-project-env-path)
+;;                                           (conda-env-activate-for-buffer))))
+(setq-default mode-line-format (cons '(:exec conda-env-current-name) mode-line-format))
+
+(put 'narrow-to-region 'disabled nil)
+
+(setq python-shell-interpreter "ipython"
+      python-shell-interpreter-args "-i --simple-prompt --InteractiveShell.display_page=True")
