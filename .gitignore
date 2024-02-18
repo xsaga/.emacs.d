@@ -1,7 +1,8 @@
-*~
-auto-save-list
-elpa
-ido.last
-smex-items
-anaconda-mode
-tramp
+# Ignore all
+/*
+
+# Except
+!.gitignore
+!init.el
+!custom.el
+!/xsc-lisp/
