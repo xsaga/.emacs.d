@@ -30,6 +30,7 @@
 (require 'xsc-completion)
 (require 'xsc-latex)
 (require 'xsc-racket)
+(require 'xsc-python)
 
 (require 'meneame)
 
