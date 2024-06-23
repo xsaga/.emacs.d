@@ -31,6 +31,7 @@
 (require 'xsc-latex)
 (require 'xsc-racket)
 (require 'xsc-python)
+(require 'xsc-go)
 
 (require 'meneame)
 
