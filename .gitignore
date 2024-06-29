@@ -6,3 +6,6 @@
 !init.el
 !custom.el
 !/xsc-lisp/
+/xsc-lisp/*~
+!/tree-sitter/
+/tree-sitter/*~

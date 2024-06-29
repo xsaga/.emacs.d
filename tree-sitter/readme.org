@@ -1,0 +1,36 @@
+* Compile tree-sitter grammar for Windows
+
+Using UCRT64 MSYS2
+
+[[https://tree-sitter.github.io/tree-sitter/][https://tree-sitter.github.io/tree-sitter/]]
+
+Checkout to an appropriate grammar version because not all are compatible.
+
+** Python example
+
+#+BEGIN_SRC bash
+  git clone https://github.com/tree-sitter/tree-sitter-python.git
+  cd tree-sitter-python/
+  git checkout v0.20.4
+  cd src/
+  gcc -fPIC -c -I. parser.c
+  gcc -fPIC -c -I. scanner.c
+  gcc -fPIC -shared *.o -o libtree-sitter-python.dll
+#+END_SRC
+
+** Go example
+
+#+BEGIN_SRC bash
+  git clone https://github.com/tree-sitter/tree-sitter-go.git
+  cd tree-sitter-go/
+  git checkout v0.20.0
+  cd src/
+  gcc -fPIC -c -I. parser.c
+  gcc -fPIC -shared *.o -o libtree-sitter-go.dll
+#+END_SRC
+
+* Some pre-compiled grammars
+
+[[https://corwin.bru.st/emacs-tree-sitter][https://corwin.bru.st/emacs-tree-sitter/]]
+
+info: [[https://lists.gnu.org/archive/html/help-emacs-windows/2023-09/msg00000.html][https://lists.gnu.org/archive/html/help-emacs-windows/2023-09/msg00000.html]]
