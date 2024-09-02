@@ -16,7 +16,6 @@
     highlight-thing ;; https://github.com/fgeller/highlight-thing.el
     magit
     paredit ;; pseudo-structurally editing Lisp code
-    racket-mode ;; Racket language
     rainbow-delimiters ;; highlight parenthesis
     rainbow-mode ;; colorize color names in buffers
     swiper ;; https://github.com/abo-abo/swiper
@@ -54,7 +53,6 @@
 
 (add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
 (add-hook 'lisp-mode-hook 'enable-paredit-mode)
-(add-hook 'racket-mode-hook 'enable-paredit-mode)
 
 
 (require 'highlight-thing)
