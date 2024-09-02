@@ -31,5 +31,9 @@
 (global-set-key (kbd "C-c o d") 'xsc-infer-directory-open-in-external-app)
 (global-set-key (kbd "C-c f d") 'xsc-infer-directory-dired)
 
+
+(global-set-key (kbd "C-c k a") 'xsc-kill-around-balanced-delimiters)
+(global-set-key (kbd "C-c k w") 'xsc-kill-around-word)
+
 (provide 'xsc-keybindings)
 ;;; xsc-keybindings.el ends here

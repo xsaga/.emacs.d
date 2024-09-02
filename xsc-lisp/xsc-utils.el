@@ -250,5 +250,198 @@ Updated 06-01-2023"
     (message "%s %s" system-type "Not supported"))))
 
 
+(defun xsc-kill-around-balanced-delimiters (n)
+  "Kill text around balanced delimiters.
+By default, delimiters are not included.
+If called with universal argument, include delimiters.
+Version 18-08-2024"
+  (interactive "p")
+  (let ((offset (if (= n 1)
+		    1
+		  0)))
+    (kill-region (save-excursion
+		   (backward-up-list 1 t t)
+		   (+ (point) offset))
+		 (save-excursion
+		   (backward-up-list -1 t t)
+		   (- (point) offset)))))
+
+(defun xsc-kill-around-word ()
+  "Kill any contiguous sequence of word and symbol characters.
+Version 18-08-2024
+Updated 25-08-2024"
+  (interactive)
+  (kill-region (save-excursion
+		 ;;(skip-syntax-backward "^ ")
+		 (skip-syntax-backward "w_")
+		 (point))
+	       (save-excursion
+		 ;;(skip-syntax-forward "^ ")
+		 (skip-syntax-forward "w_")
+		 (point))))
+
+;; diff de dos directorios
+;; Idea inicial 2024-08-23
+;; ver tambien: paquete emacs "ztree", programa de gnome "meld"
+
+;; Para hashear un buffer emacs tiene dos funciones:
+;; buffer-hash y secure-hash (ver secure-hash-algorithms)
+;; buffer-hash es mas rapido pero no adecuado para criptografia
+;; y su valor puede cambiar en distintas versiones o instancias de emacs
+;; pero para esta funcion supongo que no importa.
+
+;; diferencia en el tiempo de ejecucion:
+;; (let ((starttime (current-time)))
+;;   (dotimes (x 1000)
+;;     (with-temp-buffer
+;;       (set-buffer-multibyte nil)
+;;       (insert-file-contents-literally "c:/Users/xabie/Desktop/borrar/emacs/Makefile.in")
+;;       (secure-hash 'md5 (current-buffer))))
+;;   (message "took: %f seconds" (float-time (time-subtract (current-time) starttime))))  ; approx 0.98s
+
+;; (let ((starttime (current-time)))
+;;   (dotimes (x 1000)
+;;     (with-temp-buffer
+;;       (set-buffer-multibyte nil)
+;;       (insert-file-contents-literally "c:/Users/xabie/Desktop/borrar/emacs/Makefile.in")
+;;       (buffer-hash)))
+;;   (message "took: %f seconds" (float-time (time-subtract (current-time) starttime))))  ; approx 0.18s
+
+;; usar find-file-literally es mucho mas lento que insert-file-contents-literally
+;; approx x10 veces mas lento.
+
+(defun xsc-diff-directories--get-file-content-checksum (filename)
+  (with-temp-buffer
+    ;; (find-file-literally filename) ;; mucho mas lento
+    (set-buffer-multibyte nil) ;; https://lists.gnu.org/archive/html/bug-gnu-emacs/2021-09/msg01037.html
+    (insert-file-contents-literally filename)
+    ;;(secure-hash 'md5 (current-buffer))
+    (buffer-hash)))
+
+(defun xsc-diff-directories--get-diff-string (fileA fileB)
+  (with-temp-buffer
+    (diff-no-select fileA
+		    fileB
+		    nil
+		    t
+		    (current-buffer))
+    (buffer-substring (point-min) (point-max))))
+
+
+
+(if (eq system-type 'windows-nt)
+    (defun xsc-diff-directories--files-equal-p (file1 file2)
+      "Check if FILE1 and FILE2 files are equal by computing a checksum."
+      (let ((sum1 (xsc-diff-directories--get-file-content-checksum file1))
+	    (sum2 (xsc-diff-directories--get-file-content-checksum file2)))
+	(string= sum1 sum2)))
+  (defun xsc-diff-directories--files-equal-p (file1 file2)
+    "Check if FILE1 and FILE2 files are equal using GNU diffutils."
+    (= 0 (call-process diff-command nil nil nil "-q" file1 file2))))
+
+(require 'cl-lib)
+
+(defun xsc-diff-directories (dirA dirB)
+  "Diff two directories DIRA (old) and DIRB (new).
+Version: 23-08-2024
+Updated: 25-08-2024"
+  (interactive
+   ;; en un let, para que el segundo directorio lo lea del padre del primero.
+   (let ((dir1 (expand-file-name (read-directory-name "DirA (old): "))))
+     (list dir1
+	   (expand-file-name (read-directory-name "DirB (new): " (file-name-parent-directory dir1))))))
+  (message "scanning directories...")
+  (let* ((start-time (current-time))
+	 (results-buffer (generate-new-buffer "*DiffDir*"))
+	 (filesA (mapcar
+		  (lambda (f)
+		    (file-relative-name f dirA))
+		  (directory-files-recursively dirA
+					       ".*"
+					       nil
+					       (lambda (subdir) ;; ignorar ciertos subdirs
+						 (and (file-readable-p subdir)
+						      (not (string= ".git" (file-name-base subdir))))))))
+	 (filesB (mapcar
+		  (lambda (f)
+		    (file-relative-name f dirB))
+		  (directory-files-recursively dirB
+					       ".*"
+					       nil
+					       (lambda (subdir) ;; ignorar ciertos subdirs
+						 (and (file-readable-p subdir)
+						      (not (string= ".git" (file-name-base subdir))))))))
+	 ;; por defecto la comparacion usa eql, no funciona con strings
+	 (diff-filesA-filesB (cl-set-difference filesA filesB :test #'equal))
+	 (diff-filesB-filesA (cl-set-difference filesB filesA :test #'equal))
+	 (intersection-files (cl-intersection filesA filesB :test #'equal))
+	 (num-changes 0))
+
+    (message (format "%d files in DirA, %d files in DirB. Detecting differences..."
+		     (length filesA)
+		     (length filesB)))
+
+    (display-buffer results-buffer)
+    (princ (format "DirA: %s\n      (dired \"%s\")\n" dirA dirA) results-buffer)
+    (princ (format "DirB: %s\n      (dired \"%s\")\n\n" dirB dirB) results-buffer)
+    (redisplay)
+
+    (when diff-filesA-filesB
+      (setq num-changes (+ num-changes (length diff-filesA-filesB)))
+      (princ "There are files in DirA not shown in DirB:\n" results-buffer)
+      (princ (mapconcat (lambda (f) (concat "--- " f))
+			diff-filesA-filesB "\n")
+	     results-buffer)
+      (princ "\n\n" results-buffer)
+      (redisplay))
+
+    (when diff-filesB-filesA
+      (setq num-changes (+ num-changes (length diff-filesB-filesA)))
+      (princ "There are files in DirB not shown in DirA:\n" results-buffer)
+      (princ (mapconcat (lambda (f) (concat "+++ " f))
+			diff-filesB-filesA "\n")
+	     results-buffer)
+      (princ "\n\n" results-buffer)
+      (redisplay))
+
+    (when intersection-files
+      (dolist (f intersection-files)
+	(let ((fileA (expand-file-name f dirA))
+	      (fileB (expand-file-name f dirB)))
+	  (if (not (xsc-diff-directories--files-equal-p fileA fileB))
+	      (let* ((fileAattrs (file-attributes fileA))
+		     (fileBattrs (file-attributes fileB))
+		     (fileAmodtime (file-attribute-modification-time fileAattrs))
+		     (fileBmodtime (file-attribute-modification-time fileBattrs)))
+		(setq num-changes (1+ num-changes))
+		(princ (format "=/= %s differ:\n" f) results-buffer)
+		(princ (format "(diff \"%s\"    ;; %s (%s)\n      \"%s\")    ;; %s (%s)\n\n"
+				fileA (format-time-string "%F %T" fileAmodtime) (if (time-less-p fileAmodtime fileBmodtime) "older" "newer")
+				fileB (format-time-string "%F %T" fileBmodtime) (if (time-less-p fileBmodtime fileAmodtime) "older" "newer"))
+		       results-buffer)
+		(redisplay))))))
+
+    (princ (format "Took: %f seconds.\n" (float-time (time-subtract (current-time) start-time))) results-buffer)
+
+    (if (= num-changes 0)
+	(message "No differences.")
+      (message "There are %d differences." num-changes))))
+
+;; usar overlays para mostrar y ocultar los diffs ?
+;; overlays pruebas
+;; (with-current-buffer results-buffer
+;;   (let ((start (point))
+;; 	    ov)
+;; 	(insert "Esto es un overlay\n")
+;; 	(setq ov (make-overlay start (point)))
+;; 	(overlay-put ov 'invisible t)
+;; 	))
+;; (defun xsc-toggle-overlay ()
+;;   (interactive)
+;;   (let* ((ov-start (next-overlay-change (point)))
+;; 	 (ov (car (overlays-at ov-start))))
+;;     (message "overlay starts: %d" ov-start)
+;;     (overlay-put ov 'invisible (not (overlay-get ov 'invisible)))))
+
 (provide 'xsc-utils)
 ;;; xsc-utils.el ends here
