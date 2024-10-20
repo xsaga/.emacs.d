@@ -36,9 +36,9 @@
   (global-display-line-numbers-mode -1))
 
 (cond
- ((member "Inconsolata" (font-family-list)) (set-frame-font "Inconsolata SemiBold 10" nil t) (message "<xsc> Font set to Inconsolata"))
- ((member "Cascadia Code" (font-family-list)) (set-frame-font "Cascadia Code 9" nil t) (message "<xsc> Font set to Cascadia Code"))
- ((member "Consolas" (font-family-list)) (set-frame-font "Consolas 10" nil t) (message "<xsc> Font set to Consolas")))
+ ((member "Inconsolata" (font-family-list)) (set-frame-font "Inconsolata SemiBold 12" nil t) (message "<xsc> Font set to Inconsolata"))
+ ((member "Cascadia Code" (font-family-list)) (set-frame-font "Cascadia Code 12" nil t) (message "<xsc> Font set to Cascadia Code"))
+ ((member "Consolas" (font-family-list)) (set-frame-font "Consolas 12" nil t) (message "<xsc> Font set to Consolas")))
 
 ;; https://www.gnu.org/software/emacs/manual/html_node/elisp/Position-Parameters.html
 (add-to-list 'default-frame-alist '(left . (+ 0)))
@@ -123,7 +123,13 @@
 ;; (load-theme 'solarized-light t)
 ;; (load-theme 'birds-of-paradise-plus t)
 ;; ver creamsody-theme
-(load-theme 'modus-operandi t)
+;; (load-theme 'modus-operandi t)
+(load-theme 'leuven t)
+
+;; (set-face-attribute 'font-lock-comment-face nil :foreground "DarkGoldenrod4" :weight 'heavy)
+;; (set-face-attribute 'font-lock-comment-delimiter-face nil :foreground "DarkGoldenrod4")
+
+;; (set-background-color "linen")
 
 (show-paren-mode 1)
 (setq show-paren-when-point-in-periphery t

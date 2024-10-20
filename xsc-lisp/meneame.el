@@ -51,7 +51,9 @@
       hostname-score-assoc '(
 			     ;; hostname . score
 			     ("twitter.com" . -2)
+			     ("x.com" . -2)
 			     ("mobile.twitter.com" . -2)
+			     ("mobile.x.com" . -2)
 			     ("threadreaderapp.com" . -1)
 			     ("www.elmundotoday.com" . -1)
 			     )
@@ -157,7 +159,7 @@ Actualizado 12-11-2022"
 	(total-news 0))
     (dotimes (page page-numbers)
       (let* ((meneame-url (if (= page 0) meneame-address (concat meneame-address (format "/?page=%s" (1+ page)))))
-	     (url-user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/110.0") ;; No usar el user agent de Emacs.
+	     (url-user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0") ;; No usar el user agent de Emacs.
 	     (eww-mnm-buffer (eww-browse-url meneame-url t)))
 	(switch-to-buffer this-buffer)
 	(message "Cargando %s ..." meneame-url)
