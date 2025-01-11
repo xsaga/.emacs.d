@@ -4,7 +4,6 @@
 # Except
 !.gitignore
 !init.el
-!custom.el
 !/xsc-lisp/
 /xsc-lisp/*~
 /xsc-lisp/*.elc
