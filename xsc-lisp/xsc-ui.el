@@ -36,7 +36,7 @@
   (global-display-line-numbers-mode -1))
 
 (cond
- ((member "Inconsolata" (font-family-list)) (set-frame-font "Inconsolata SemiBold 12" nil t) (message "<xsc> Font set to Inconsolata"))
+ ((member "Inconsolata" (font-family-list)) (set-frame-font "Inconsolata 12" nil t) (message "<xsc> Font set to Inconsolata"))
  ((member "Cascadia Code" (font-family-list)) (set-frame-font "Cascadia Code 12" nil t) (message "<xsc> Font set to Cascadia Code"))
  ((member "Consolas" (font-family-list)) (set-frame-font "Consolas 12" nil t) (message "<xsc> Font set to Consolas")))
 
