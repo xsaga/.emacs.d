@@ -309,6 +309,8 @@ Updated 25-08-2024"
 
 ;; usar find-file-literally es mucho mas lento que insert-file-contents-literally
 ;; approx x10 veces mas lento.
+(require 'diff)
+(require 'cl-lib)
 
 (defun xsc-diff-directories--get-file-content-checksum (filename)
   (with-temp-buffer
@@ -327,8 +329,6 @@ Updated 25-08-2024"
 		    (current-buffer))
     (buffer-substring (point-min) (point-max))))
 
-
-
 (if (eq system-type 'windows-nt)
     (defun xsc-diff-directories--files-equal-p (file1 file2)
       "Check if FILE1 and FILE2 files are equal by computing a checksum."
@@ -336,15 +336,28 @@ Updated 25-08-2024"
 	    (sum2 (xsc-diff-directories--get-file-content-checksum file2)))
 	(string= sum1 sum2)))
   (defun xsc-diff-directories--files-equal-p (file1 file2)
-    "Check if FILE1 and FILE2 files are equal using GNU diffutils."
-    (= 0 (call-process diff-command nil nil nil "-q" file1 file2))))
+    "Check if FILE1 and FILE2 files are equal using diff-no-select."
+    ;; No puedo usar simplemente call-process:
+    ;; (= 0 (call-process diff-command nil nil nil "-q" file1 file2))
+    ;; porque no es compatible con tramp.
+    ;; return nil, si hay diferencias entre file1 y file2.
+    (with-temp-buffer
+      (diff-no-select file1 file2 "-q" t (current-buffer))
+      (goto-char (point-min))
+      (search-forward "Diff finished (no differences)." nil t))))
 
-(require 'cl-lib)
+(defun xsc-diff-directories--directory-files-recursively (dir)
+  (directory-files-recursively dir ".*" nil
+			       (lambda (subdir) ;; ignorar ciertos subdirs
+				 (and (file-readable-p subdir)
+				      (not (string= ".git" (file-name-base subdir)))
+				      (not (string= ".ccls-cache" (file-name-base subdir)))))))
+
 
 (defun xsc-diff-directories (dirA dirB)
   "Diff two directories DIRA (old) and DIRB (new).
 Version: 23-08-2024
-Updated: 25-08-2024"
+Updated: 08-02-2025"
   (interactive
    ;; en un let, para que el segundo directorio lo lea del padre del primero.
    (let ((dir1 (expand-file-name (read-directory-name "DirA (old): "))))
@@ -354,23 +367,11 @@ Updated: 25-08-2024"
   (let* ((start-time (current-time))
 	 (results-buffer (generate-new-buffer "*DiffDir*"))
 	 (filesA (mapcar
-		  (lambda (f)
-		    (file-relative-name f dirA))
-		  (directory-files-recursively dirA
-					       ".*"
-					       nil
-					       (lambda (subdir) ;; ignorar ciertos subdirs
-						 (and (file-readable-p subdir)
-						      (not (string= ".git" (file-name-base subdir))))))))
+		  (lambda (f) (file-relative-name f dirA))
+		  (xsc-diff-directories--directory-files-recursively dirA)))
 	 (filesB (mapcar
-		  (lambda (f)
-		    (file-relative-name f dirB))
-		  (directory-files-recursively dirB
-					       ".*"
-					       nil
-					       (lambda (subdir) ;; ignorar ciertos subdirs
-						 (and (file-readable-p subdir)
-						      (not (string= ".git" (file-name-base subdir))))))))
+		  (lambda (f) (file-relative-name f dirB))
+		  (xsc-diff-directories--directory-files-recursively dirB)))
 	 ;; por defecto la comparacion usa eql, no funciona con strings
 	 (diff-filesA-filesB (cl-set-difference filesA filesB :test #'equal))
 	 (diff-filesB-filesA (cl-set-difference filesB filesA :test #'equal))
