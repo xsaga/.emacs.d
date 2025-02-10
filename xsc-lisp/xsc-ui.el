@@ -26,6 +26,8 @@
 
 (display-time-mode 1)
 
+(global-hl-line-mode)
+
 ;; esto funciona?
 (require 'battery)
 (unless (null battery-status-function)
