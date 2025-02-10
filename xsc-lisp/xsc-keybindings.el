@@ -36,6 +36,12 @@
 (global-set-key (kbd "C-c k w") 'xsc-kill-around-word)
 (global-set-key (kbd "M-u") 'xsc-toggle-capitalize-upcase-or-downcase-previous-word)
 
+;; https://karthinks.com/software/emacs-window-management-almanac/
+(global-set-key (kbd "M-o") 'other-window)
+(global-set-key (kbd "M-O") (lambda () (interactive) (other-window -1)))
+(windmove-default-keybindings) ;; Shift + flecha (right, up, left, down)
+(windmove-swap-states-default-keybindings '(control shift)) ;; Control + Shift + flecha (right, up, left, down)
+(setq windmove-create-window t)
 
 (provide 'xsc-keybindings)
 ;;; xsc-keybindings.el ends here
