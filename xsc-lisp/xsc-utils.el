@@ -444,5 +444,27 @@ Updated: 08-02-2025"
 ;;     (message "overlay starts: %d" ov-start)
 ;;     (overlay-put ov 'invisible (not (overlay-get ov 'invisible)))))
 
+(defun xsc-toggle-capitalize-upcase-or-downcase-previous-word ()
+  "Alterna entre capitalizar la ultima palabra, ponerlo todo en
+mayusculas o ponerlo todo en minusculas. Basado en:
+http://xahlee.info/emacs/emacs/emacs_toggle_letter_case.html
+Created: 2025-01-19 Updated: 2025-02-10"
+  (interactive)
+  (save-excursion
+    (let ((word-start (progn (backward-sexp) (point)))
+	  (word-end (progn (forward-sexp) (point))))
+      (if (eq last-command this-command)
+	  (cond ((eq (get this-command 'state) 'cap)
+		 (upcase-region word-start word-end)
+		 (put this-command 'state 'up))
+		((eq (get this-command 'state) 'up)
+		 (downcase-region word-start word-end)
+		 (put this-command 'state 'down))
+		((eq (get this-command 'state) 'down)
+		 (capitalize-region word-start word-end)
+		 (put this-command 'state 'cap)))
+	(capitalize-region word-start word-end)
+	(put this-command 'state 'cap)))))
+
 (provide 'xsc-utils)
 ;;; xsc-utils.el ends here

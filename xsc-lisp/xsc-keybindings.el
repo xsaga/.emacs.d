@@ -34,6 +34,8 @@
 
 (global-set-key (kbd "C-c k a") 'xsc-kill-around-balanced-delimiters)
 (global-set-key (kbd "C-c k w") 'xsc-kill-around-word)
+(global-set-key (kbd "M-u") 'xsc-toggle-capitalize-upcase-or-downcase-previous-word)
+
 
 (provide 'xsc-keybindings)
 ;;; xsc-keybindings.el ends here
