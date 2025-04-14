@@ -467,4 +467,40 @@ Created: 2025-01-19 Updated: 2025-02-10"
 	(put this-command 'state 'cap)))))
 
 (provide 'xsc-utils)
+
+(defvar xsc-sus-unicode-codepoints-regexp
+  (regexp-opt-charset
+    (append
+     ;; variation selector 1 - 16
+     (number-sequence #xFE00 #xFE0F)
+     ;; variation selector supplement 17 - 256
+     (number-sequence #xE0100 #xE01EF)
+     ;; zero width characters
+     '(#x200B #x200C #x200D #xFEFF)
+     ;; left to right, right to left marks embeddings overrides, isolates
+     '(#x200E #x200F #x202A #x202B #x202C #x202D #x202E)
+     (number-sequence #x2066 #x2069)
+     ;; non breaking and special spaces
+     '(#x00A0 #x202F #x205F #x3000)
+     (number-sequence #x2000 #x200A)
+     ;; line and paragraph separator
+     '(#x2028 #x2029)
+     ;; word joiner
+     '(#x2060)
+     ))
+  "Regex for suspicious unicode codepoints.")
+
+(defun xsc-occur-sus-characters ()
+  "Iniciar una busqueda con occur para encontrar caracteres unicode
+sospechosos. Inspirado en:
+http://xahlee.info/emacs/emacs/elisp_unicode_replace_invisible_chars.html,
+pero incluye mas caracteres.  Creado: 2025-02-12
+"
+  (interactive)
+  (if (save-excursion
+	(goto-char (point-min))
+	(re-search-forward xsc-sus-unicode-codepoints-regexp nil t))
+      (occur xsc-sus-unicode-codepoints-regexp)
+    (message "No sus.")))
+
 ;;; xsc-utils.el ends here
