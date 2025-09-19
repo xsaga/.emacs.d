@@ -183,12 +183,5 @@ First implementation 22-12-2022"
 	    (message "<xsc> Aspell found using WSL: %s" (string-trim (buffer-substring-no-properties (point-min) (point-max)))))
 	(message "<xsc> Failed calling aspell using WSL: %s" (string-trim (buffer-substring-no-properties (point-min) (point-max))))))))
 
-;; Racket
-(setq racket-path "C:/Program Files/Racket")
-(unless (file-readable-p (concat (file-name-as-directory racket-path) "Racket.exe"))
-  (display-warning 'xsc "Racket.exe not found" :warning))
-
-(add-to-list 'exec-path racket-path)
-
 (provide 'xsc-mswindows)
 ;;; xsc-mswindows.el ends here
