@@ -13,12 +13,10 @@
 
 (defvar xsc-basic-packages
   '(
-    highlight-thing ;; https://github.com/fgeller/highlight-thing.el
-    magit
     paredit ;; pseudo-structurally editing Lisp code
-    rainbow-delimiters ;; highlight parenthesis
-    rainbow-mode ;; colorize color names in buffers
-    swiper ;; https://github.com/abo-abo/swiper
+    ;; rainbow-delimiters ;; highlight parenthesis
+    ;; rainbow-mode ;; colorize color names in buffers
+    ;; swiper ;; https://github.com/abo-abo/swiper
     unfill ;; Do the opposite of fill-paragraph or fill-region
     which-key ;; display the key bindings following a command
     )
@@ -47,24 +45,11 @@
 
 (which-key-mode)
 
-(add-hook 'prog-mode-hook #'rainbow-mode)
-
-(add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
+;; (add-hook 'prog-mode-hook #'rainbow-mode)
+;; (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 
 (add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
 (add-hook 'lisp-mode-hook 'enable-paredit-mode)
-
-
-(require 'highlight-thing)
-(setq highlight-thing-what-thing 'symbol
-      highlight-thing-prefer-active-region t
-      highlight-thing-limit-to-region-in-large-buffers-p t
-      highlight-thing-narrow-region-lines 20
-      highlight-thing-large-buffer-limit 5000
-      highlight-thing-delay-seconds 0.2
-      highlight-thing-all-visible-buffers-p nil)
-
-(global-highlight-thing-mode)
 
 (provide 'xsc-packages)
 ;;; xsc-packages.el ends here

@@ -6,7 +6,6 @@
 ;; 'length>', 'with-environment-variables', 'modus' themes.
 ;;; Code:
 
-
 (add-to-list 'load-path (locate-user-emacs-file "xsc-lisp"))
 
 (require 'xsc-packages)
@@ -28,10 +27,13 @@
 (require 'xsc-ui)
 (require 'xsc-gallery)
 (require 'xsc-completion)
-(require 'xsc-latex)
-(require 'xsc-racket)
-(require 'xsc-python)
-(require 'xsc-go)
+
+(require 'xsc-magit)
+
+;; (require 'xsc-go)
+;; (require 'xsc-latex)
+;; (require 'xsc-python)
+;; (require 'xsc-racket)
 
 (require 'meneame)
 
@@ -40,10 +42,6 @@
 ;; Spelling
 (setq ispell-dictionary "american")
 (add-hook 'text-mode-hook 'flyspell-mode)
-
-;; magit
-(setq magit-diff-refine-hunk t)
-(setq magit-log-margin '(t "%Y-%m-%d %H:%M" magit-log-margin-width t 18))
 
 ;; enable abbrev mode
 (setq-default abbrev-mode t)
