@@ -14,9 +14,6 @@
 (defvar xsc-basic-packages
   '(
     paredit ;; pseudo-structurally editing Lisp code
-    ;; rainbow-delimiters ;; highlight parenthesis
-    ;; rainbow-mode ;; colorize color names in buffers
-    ;; swiper ;; https://github.com/abo-abo/swiper
     unfill ;; Do the opposite of fill-paragraph or fill-region
     which-key ;; display the key bindings following a command
     )
@@ -44,9 +41,6 @@
       which-key-show-docstrings nil)
 
 (which-key-mode)
-
-;; (add-hook 'prog-mode-hook #'rainbow-mode)
-;; (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 
 (add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
 (add-hook 'lisp-mode-hook 'enable-paredit-mode)
