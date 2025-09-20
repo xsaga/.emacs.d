@@ -9,6 +9,12 @@
 (global-set-key (kbd "C-c s e") 'xsc-everything-search)
 (global-set-key (kbd "C-c o t") 'xsc-open-windows-terminal)
 
+;; usando emacs desde la terminal 'emacs -nw'
+;; no reconoce Ctr-Shift-*, lo interpreta como C-*.
+;; https://emacs.stackexchange.com/questions/32294/how-to-make-emacs-recognise-c-shift-combinations-in-terminal-mode
+(when (display-graphic-p)
+    (global-set-key (kbd "C-S-s") 'xsc-fake-swiper))
+
 
 (global-set-key (kbd "C-x g") 'magit-status)
 

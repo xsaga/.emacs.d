@@ -503,4 +503,31 @@ pero incluye mas caracteres.  Creado: 2025-02-12
       (occur xsc-sus-unicode-codepoints-regexp)
     (message "No sus.")))
 
+
+(defun xsc-fake-swiper ()
+  "Muestra todas las lineas del buffer que coincidan con un patron de
+busqueda de un modo interactivo. Al seleccionar una linea, mueve el
+cursor a esa linea. Alternativa al uso que yo le daba a
+Swiper (https://github.com/abo-abo/swiper), pero sin ninguna dependencia
+externa. Ventajas: mas rapido que swiper (en un buffer de 1000000 de
+lineas, tranco list, swiper tarda unos 5.4 segundos en aparecer, esta
+funcion tarda 4.3 segundos). Una vez que se muestran todos los
+completions, swiper no es muy fluido al escribir o borrar
+caracteres. Swiper no respeta completion-styles, esta funcion
+si. Creado: 2025-09-20"
+  (interactive)
+  (let* ((all-buffer-lines (split-string
+			    (buffer-substring-no-properties (point-min) (point-max))
+			    "\n"))
+	 (nonempty-buffer-lines-linenum (let ((cnt 0))
+					  (seq-keep (lambda (s)
+						      (setq cnt (1+ cnt))
+						      (when (not (string-equal "" s))
+							(concat (number-to-string cnt) ": " s)))
+						    all-buffer-lines)))
+	 (selected-line (let ((completions-sort 'nil))
+			  (completing-read (format "matching %s lines> " (length nonempty-buffer-lines-linenum))
+					   nonempty-buffer-lines-linenum))))
+    (goto-line (string-to-number (car (string-split selected-line ":"))))))
+
 ;;; xsc-utils.el ends here
