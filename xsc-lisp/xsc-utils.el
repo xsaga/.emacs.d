@@ -516,18 +516,41 @@ completions, swiper no es muy fluido al escribir o borrar
 caracteres. Swiper no respeta completion-styles, esta funcion
 si. Creado: 2025-09-20"
   (interactive)
-  (let* ((all-buffer-lines (split-string
-			    (buffer-substring-no-properties (point-min) (point-max))
-			    "\n"))
-	 (nonempty-buffer-lines-linenum (let ((cnt 0))
-					  (seq-keep (lambda (s)
-						      (setq cnt (1+ cnt))
-						      (when (not (string-equal "" s))
-							(concat (number-to-string cnt) ": " s)))
-						    all-buffer-lines)))
-	 (selected-line (let ((completions-sort 'nil))
-			  (completing-read (format "matching %s lines> " (length nonempty-buffer-lines-linenum))
-					   nonempty-buffer-lines-linenum))))
-    (goto-line (string-to-number (car (string-split selected-line ":"))))))
+
+  (let ((calling-window (get-buffer-window (current-buffer)))
+	(hl-line-mode-orig (bound-and-true-p hl-line-mode)))
+    (defun xsc-fake-swiper-move-lines-in-original-buffer (&optional n vertical)
+      (let* ((line (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
+	     (pos (string-to-number (car (string-split line ":")))))
+	(with-selected-window calling-window
+	  (hl-line-mode 1)
+	  (goto-char (point-min))
+	  (forward-line (1- pos))
+	  (recenter)
+	  (hl-line-highlight))))
+
+    (let* ((all-buffer-lines (split-string
+			      (buffer-substring-no-properties (point-min) (point-max))
+			      "\n"))
+	   (nonempty-buffer-lines-linenum (let ((cnt (1- (line-number-at-pos (point-min)))))
+					    (seq-keep (lambda (s)
+							(setq cnt (1+ cnt))
+							(when (not (string-equal "" s))
+							  (concat (number-to-string cnt) ": " s)))
+						      all-buffer-lines)))
+	   (selected-line (save-excursion
+			    (unwind-protect
+				(let ((completions-sort 'nil)
+				      (completions-format 'one-column))
+				  (advice-add 'minibuffer-next-completion :after #'xsc-fake-swiper-move-lines-in-original-buffer)
+				  (completing-read (format "matching %s lines> "
+							   (length nonempty-buffer-lines-linenum))
+						   nonempty-buffer-lines-linenum))
+			      (progn
+				(unless hl-line-mode-orig
+				  (hl-line-mode -1))
+				(advice-remove 'minibuffer-next-completion #'xsc-fake-swiper-move-lines-in-original-buffer))))))
+      (goto-char (point-min))
+      (forward-line (1- (string-to-number (car (string-split selected-line ":"))))))))
 
 ;;; xsc-utils.el ends here
