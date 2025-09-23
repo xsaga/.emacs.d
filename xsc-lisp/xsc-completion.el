@@ -15,19 +15,19 @@
       read-buffer-completion-ignore-case t
       completion-ignore-case t
       completions-max-height 20
-      completions-sort 'historical
+      completions-sort (if (version< "30.1" emacs-version) 'historical 'alphabetical)
       completion-show-help nil
       completion-auto-select 'second-tab
-      completions-format 'one-column)
+      completion-auto-help 'visible
+      completions-format 'horizontal)
 
 (define-key minibuffer-mode-map (kbd "C-n") 'minibuffer-next-completion)
 (define-key minibuffer-mode-map (kbd "C-p") 'minibuffer-previous-completion)
 
-
-(global-completion-preview-mode)
-
-(define-key completion-preview-active-mode-map (kbd "C-n") 'completion-preview-next-candidate)
-(define-key completion-preview-active-mode-map (kbd "C-p") 'completion-preview-prev-candidate)
+(when (version< "30.1" emacs-version)
+  (global-completion-preview-mode)
+  (define-key completion-preview-active-mode-map (kbd "C-n") 'completion-preview-next-candidate)
+  (define-key completion-preview-active-mode-map (kbd "C-p") 'completion-preview-prev-candidate))
 
 (provide 'xsc-completion)
 ;;; xsc-completion.el ends here
