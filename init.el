@@ -8,8 +8,27 @@
 
 (add-to-list 'load-path (locate-user-emacs-file "xsc-lisp"))
 
+;; mover lisp autogenerado por M-x customize a otro archivo
+;; (describe-variable 'custom-file)
+(setq custom-file "~/.emacs.d/custom.el")
+(when (file-exists-p custom-file)
+  (load custom-file))
+
 (require 'xsc-packages)
+(require 'xsc-completion)
+(require 'xsc-magit)
+
+;; (require 'xsc-highlight-thing)
+
+;; (require 'xsc-go)
+;; (require 'xsc-latex)
+;; (require 'xsc-python)
+;; (require 'xsc-racket)
+
+(require 'xsc-ui)
 (require 'xsc-utils)
+(require 'xsc-gallery)
+(require 'meneame)
 
 (when (eq system-type 'windows-nt)
   (require 'xsc-mswindows))
@@ -17,25 +36,6 @@
 (when (and (eq system-type 'gnu/linux)
            (file-directory-p "/mnt/c/Windows"))
   (require 'xsc-wsl))
-
-;; mover lisp autogenerado por M-x customize a otro archivo
-;; (describe-variable 'custom-file)
-(setq custom-file "~/.emacs.d/custom.el")
-(when (file-exists-p custom-file)
-  (load custom-file))
-
-(require 'xsc-ui)
-(require 'xsc-gallery)
-(require 'xsc-completion)
-
-(require 'xsc-magit)
-
-;; (require 'xsc-go)
-;; (require 'xsc-latex)
-;; (require 'xsc-python)
-;; (require 'xsc-racket)
-
-(require 'meneame)
 
 (require 'xsc-keybindings)
 
