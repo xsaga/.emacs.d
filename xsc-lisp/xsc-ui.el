@@ -134,8 +134,10 @@
 ;; (set-background-color "linen")
 
 (show-paren-mode 1)
-(setq show-paren-when-point-in-periphery t
-      show-paren-when-point-inside-paren t)
+(setq show-paren-when-point-in-periphery nil
+      show-paren-when-point-inside-paren t
+      show-paren-context-when-offscreen 'overlay
+      show-paren-style 'expression)
 
 (provide 'xsc-ui)
 ;;; xsc-ui.el ends here
