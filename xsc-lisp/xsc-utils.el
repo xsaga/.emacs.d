@@ -466,8 +466,6 @@ Created: 2025-01-19 Updated: 2025-02-10"
 	(capitalize-region word-start word-end)
 	(put this-command 'state 'cap)))))
 
-(provide 'xsc-utils)
-
 (defvar xsc-sus-unicode-codepoints-regexp
   (regexp-opt-charset
     (append
@@ -553,4 +551,5 @@ si. Creado: 2025-09-20"
       (goto-char (point-min))
       (forward-line (1- (string-to-number (car (string-split selected-line ":"))))))))
 
+(provide 'xsc-utils)
 ;;; xsc-utils.el ends here
