@@ -14,6 +14,9 @@
 (when (file-exists-p custom-file)
   (load custom-file))
 
+;; no guardar claves en plano
+(setq auth-sources '("~/.authinfo.gpg"))
+
 (require 'xsc-packages)
 (require 'xsc-completion)
 (require 'xsc-magit)
