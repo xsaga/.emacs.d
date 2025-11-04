@@ -33,6 +33,8 @@
 (require 'xsc-gallery)
 (require 'meneame)
 
+(require 'xsc-gptel)
+
 (when (eq system-type 'windows-nt)
   (require 'xsc-mswindows))
 
